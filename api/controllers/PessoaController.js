@@ -55,6 +55,62 @@ class PessoaController {
     }
   }
 
+  static async pegaUmaMatricula(req, res) {
+    const { estudanteId, matriculaId } = req.params;
+    try {
+      const matricula = await database.Matriculas.findOne({ 
+        where: { 
+          id: Number(matriculaId),
+          estudante_id: Number(estudanteId)
+        }});
+      return res.status(200).json(matricula);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
+  static async criaMatricula(req, res) {
+    const { estudanteId } = req.params;
+    const matricula = { ...req.body, estudante_id: Number(estudanteId) }
+
+    try {
+      const novaMatricula = await database.Matriculas.create(matricula);
+      return res.status(200).json(novaMatricula);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
+  static async atualizaMatricula(req, res) {
+    const { estudanteId, matriculaId } = req.params;
+    const matricula = req.body;
+    try {
+      await database.Matriculas.update(matricula, { 
+        where: { 
+          id: Number(matriculaId),
+          estudante_id: Number(estudanteId)
+        }});
+      //Precisa dessa linha porque o sequelize só retorna 0 ou 1 e precisa obter o valor do objeto
+      const matriculaAtualizada = await database.Matriculas.findOne({ 
+        where: { 
+          id: Number(matriculaId),
+        }}); 
+      return res.status(200).json(matriculaAtualizada);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
+  static async removeMatricula(req, res) {
+    const { estudanteId, matriculaId } = req.params;
+    try {
+      await database.Matriculas.destroy({ where: { id: Number(matriculaId) }});
+      return res.status(200).json({mensagem: `id ${matriculaId} deletado `})
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+
 }
 
 module.exports = PessoaController;

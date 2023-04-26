@@ -7,6 +7,7 @@ module.exports = app => {
   //Declarando que roda requisição que tiver corpo, será convertida em json
   app.use(
     bodyParser.json(),
+    bodyParser.urlencoded({ extended: false }),
     pessoas,
     niveis,
     turmas
